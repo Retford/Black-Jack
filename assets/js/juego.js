@@ -16,11 +16,10 @@ let puntosJugador = 0,
 // Referencia del HTML
 const btnPedirCarta = document.querySelector('#btn__pedir');
 const btnDetenerCarta = document.querySelector('#btn__detener');
+const btnNuevoJuego = document.querySelector('#btn__nuevo');
 const valorJugadores = document.querySelectorAll('small');
 const contenedorJugadorCarta = document.querySelector('#jugador__cartas');
-const contenedorComputadoraCarta = document.querySelector(
-  '#computadora__cartas'
-);
+const contenedorComputadoraCarta = document.querySelector('#computadora__cartas');
 
 // Esta funcion crea una nueva baraja
 const crearDeck = () => {
@@ -62,7 +61,6 @@ const turnoComputadora = (puntosMinimos) => {
   do {
     const carta = pedirCarta();
     puntosComputadora = puntosComputadora + valorCarta(carta);
-    console.log(puntosComputadora);
     valorJugadores[1].textContent = puntosComputadora;
     const imgCarta = document.createElement('img');
     imgCarta.classList.add('carta');
@@ -73,23 +71,32 @@ const turnoComputadora = (puntosMinimos) => {
       break;
     }
   } while (puntosComputadora < puntosMinimos && puntosMinimos <= 21);
+
+  setTimeout(() => {
+    puntosJugador > 21
+      ? alert('La Computadora Gana')
+      : puntosJugador === puntosComputadora
+      ? alert('Nadie Gana')
+      : puntosComputadora > 21
+      ? alert('El Jugador Gana')
+      : puntosJugador < puntosComputadora
+      ? alert('La Computadora Gana')
+      : alert('El Jugador Gana');
+  }, 500);
 };
 
 // Botón detener
 btnDetenerCarta.addEventListener('click', () => {
   btnPedirCarta.disabled = true;
   btnDetenerCarta.disabled = true;
-
   turnoComputadora(puntosJugador);
 });
 
 // Eventos
-console.log(deck);
 
 btnPedirCarta.addEventListener('click', () => {
   const carta = pedirCarta();
-  puntosJugador = puntosJugador + valorCarta(carta);
-  console.log(puntosJugador);
+  puntosJugador += valorCarta(carta);
   valorJugadores[0].textContent = puntosJugador;
   const imgCarta = document.createElement('img');
   imgCarta.classList.add('carta');
@@ -97,7 +104,6 @@ btnPedirCarta.addEventListener('click', () => {
   contenedorJugadorCarta.appendChild(imgCarta);
 
   if (puntosJugador > 21) {
-    valorJugadores[0].textContent = 'Perdió :(';
     btnPedirCarta.disabled = true;
     btnDetenerCarta.disabled = true;
 
@@ -109,4 +115,21 @@ btnPedirCarta.addEventListener('click', () => {
 
     turnoComputadora(puntosJugador);
   }
+});
+
+// Boton de Juego Nuevo
+
+btnNuevoJuego.addEventListener('click', () => {
+  valorJugadores[0].textContent = 0;
+  valorJugadores[1].textContent = 0;
+  puntosJugador = 0;
+  puntosComputadora = 0;
+
+  deck = [];
+  crearDeck();
+
+  contenedorComputadoraCarta.innerHTML = '';
+  contenedorJugadorCarta.innerHTML = '';
+  btnPedirCarta.disabled = false;
+  btnDetenerCarta.disabled = false;
 });
